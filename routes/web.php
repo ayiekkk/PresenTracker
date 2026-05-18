@@ -8,10 +8,12 @@ use App\Http\Controllers\Siswa\DashboardSiswaController;
 use App\Http\Controllers\Siswa\AbsensiController as SiswaAbsensiController;
 use App\Http\Controllers\Auth\RegisterController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\ProfileController;
 
 // Redirect berdasarkan role setelah login
 Route::get('/', function () {
-    if (auth()->check()) {
+    if (Auth::user()) {
         return auth()->user()->isAdmin()
             ? redirect()->route('admin.kelas.index')
             : redirect()->route('siswa.kelas.cari');
@@ -69,5 +71,18 @@ Route::middleware(['auth', 'role:siswa'])->prefix('siswa')->name('siswa.')->grou
         // Absensi siswa
         Route::get('absensi', [SiswaAbsensiController::class, 'index'])->name('absensi.index');
         Route::post('absensi', [SiswaAbsensiController::class, 'presensi'])->name('absensi.store');
+
+        // Daftar Siswa
+        Route::get('daftarsiswa', [SiswaAbsensiController::class, 'daftarSiswa'])->name('daftarsiswa');
     });
 });
+
+// Profile
+    Route::get('/profile', [ProfileController::class, 'edit'])
+        ->name('profile.edit');
+
+    Route::patch('/profile', [ProfileController::class, 'update'])
+        ->name('profile.update');
+
+    Route::delete('/profile', [ProfileController::class, 'destroy'])
+        ->name('profile.destroy');

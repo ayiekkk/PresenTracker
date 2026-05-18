@@ -7,13 +7,14 @@ use App\Models\Kelas;
 use App\Models\Absensi;
 use App\Models\User; // ← tambahkan ini
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class DashboardSiswaController extends Controller
 {
     public function cariKelas()
     {
         /** @var User $user */
-        $user = auth()->user(); // ← tambahkan type hint
+        $user = Auth::user(); // ← tambahkan type hint
 
         $kelasSaya = $user->kelasSiswa()->get();
 
@@ -31,7 +32,7 @@ class DashboardSiswaController extends Controller
         }
 
         /** @var User $user */
-        $user = auth()->user(); // ← tambahkan type hint
+        $user = Auth::user(); // ← tambahkan type hint
 
         if ($kelas->siswa()->where('siswa_id', $user->id)->exists()) {
             return redirect()->route('siswa.kelas.dashboard', $kelas)
@@ -49,7 +50,7 @@ class DashboardSiswaController extends Controller
         $this->cekAnggotaKelas($kelas);
 
         /** @var User $siswa */
-        $siswa = auth()->user(); // ← tambahkan type hint
+        $siswa = Auth::user(); // ← tambahkan type hint
 
         $totalHadir = Absensi::where('kelas_id', $kelas->id)
             ->where('siswa_id', $siswa->id)
@@ -86,7 +87,7 @@ class DashboardSiswaController extends Controller
     private function cekAnggotaKelas(Kelas $kelas): void
     {
         /** @var User $user */
-        $user = auth()->user(); // ← tambahkan type hint
+        $user = Auth::user(); // ← tambahkan type hint
 
         if (!$kelas->siswa()->where('siswa_id', $user->id)->exists()) {
             abort(403, 'Anda bukan anggota kelas ini.');
